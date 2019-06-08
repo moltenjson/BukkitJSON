@@ -54,7 +54,7 @@ If you are a server owner/admin, and a plugin asked you to download BukkitJSON, 
 
 
 # Plugins that use BukkitJSON
-If your plugin uses BukkitJSON, feel free to open an issue requesting your plugin page to be added below.
 
-Plugins that use BukkitJSON:
 * None!
+
+*If your plugin uses BukkitJSON, feel free to open an issue requesting your plugin page to be added below.*
