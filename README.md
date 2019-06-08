@@ -51,3 +51,10 @@ If you are not using any build system like Gradle or Maven, you can add BukkitJS
 # Server Administrators
 If you are a server owner/admin, and a plugin asked you to download BukkitJSON, simply drag and drop 
 [the latest JAR](https://github.com/ReflxctionDev/BukkitJSON/releases/latest) to your **plugins** folder, and all should be good.
+
+
+# Plugins that use BukkitJSON
+If your plugin uses BukkitJSON, feel free to open an issue requesting your plugin page to be added below.
+
+Plugins that use BukkitJSON:
+* None!
