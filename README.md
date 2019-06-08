@@ -40,7 +40,7 @@ repositories {
 
 ...and to your dependencies:
 ```gradle
-compile 'com.github.ReflxctionDev:SimpleJSON:VERSION'
+compile 'com.github.ReflxctionDev:BukkitJSON:VERSION'
 ```
 
 #### JAR classpath
