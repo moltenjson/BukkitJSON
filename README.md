@@ -1,5 +1,5 @@
 # BukkitJSON
-BukkitJSON is a Bukkit plugin, which acts like an alternative to [SimpleJSON](https://www.github.com/ReflxctionDev/SimpleJSON). This allows developers to have BukkitJSON as a dependency without needing to embed it in the plugin JAR. It also allows multiple plugins that use BukkitJSON to have a relatively small JAR size, all through BukkitJSON.
+BukkitJSON is a Bukkit plugin, which acts like an alternative to [SimpleJSON](https://www.github.com/ReflxctionDev/SimpleJSON). This allows developers to have SimpleJSON as a dependency without needing to embed it in the plugin JAR. It also allows multiple plugins that use BukkitJSON to have a relatively small JAR size, all through BukkitJSON.
 
 # Developers
 If you're a developer and would like to use BukkitJSON:
