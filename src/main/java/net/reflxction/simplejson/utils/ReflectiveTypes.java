@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * A simple class which contains different {@link Type}s used by the library for
+ * A simple class which contains different {@link java.lang.reflect.Type}s used by the library for
  * serializing and deserializing purposes.
  */
 public class ReflectiveTypes {
