@@ -1,4 +1,4 @@
 name: BukkitJSON
 version: ${project.version}
-main: net.reflxction.bukkitjson.BukkitJSON
+main: net.moltenjson.bukkit.BukkitJSON
 description: A Bukkit-based alternative to SimpleJSON
