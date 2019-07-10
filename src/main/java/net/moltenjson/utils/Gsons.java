@@ -1,5 +1,5 @@
 /*
- * * Copyright 2018 github.com/moltenjson
+ * * Copyright 2018-2019 github.com/moltenjson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder;
  */
 public class Gsons {
 
+    /* Cannot be initiated */
     private Gsons() {
         throw new AssertionError(Gsons.class.getName() + " cannot be initiated");
     }

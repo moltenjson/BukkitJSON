@@ -1,5 +1,5 @@
 /*
- * * Copyright 2018 github.com/moltenjson
+ * * Copyright 2018-2019 github.com/moltenjson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,17 @@
  */
 package net.moltenjson.configuration.direct;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import net.moltenjson.configuration.select.SelectableConfiguration;
 import net.moltenjson.json.JsonFile;
 import net.moltenjson.json.JsonWriter;
 import net.moltenjson.json.Lockable;
-import net.moltenjson.utils.Checks;
 import net.moltenjson.utils.Gsons;
 import net.moltenjson.utils.JsonUtils;
-import net.moltenjson.utils.ObjectUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -69,8 +69,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      * @throws IOException I/O exception while connecting with the file
      */
-    public DirectConfiguration(JsonFile file, boolean locked) throws IOException {
-        Preconditions.checkNotNull(file, "JsonFile (file) cannot be null");
+    public DirectConfiguration(@NotNull JsonFile file, boolean locked) throws IOException {
         writer = new JsonWriter(file);
         this.locked = locked;
         content = writer.getCachedContentAsObject();
@@ -82,7 +81,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param file JSON file to contact
      * @throws IOException I/O exception while connecting with the file
      */
-    public DirectConfiguration(JsonFile file) throws IOException {
+    public DirectConfiguration(@NotNull JsonFile file) throws IOException {
         this(file, false);
     }
 
@@ -92,8 +91,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key Key to fetch from
      * @return The associated string
      */
-    public final String getString(String key) {
-        Checks.notNull(key);
+    public final String getString(@NotNull String key) {
         return content.get(key).getAsString();
     }
 
@@ -103,8 +101,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key Key to fetch from
      * @return The associated integer
      */
-    public final int getInt(String key) {
-        Checks.notNull(key);
+    public final int getInt(@NotNull String key) {
         return content.get(key).getAsInt();
     }
 
@@ -114,8 +111,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key Key to fetch from
      * @return The associated double
      */
-    public final double getDouble(String key) {
-        Checks.notNull(key);
+    public final double getDouble(@NotNull String key) {
         return content.get(key).getAsDouble();
     }
 
@@ -125,8 +121,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key Key to fetch from
      * @return The associated long
      */
-    public final long getLong(String key) {
-        Checks.notNull(key);
+    public final long getLong(@NotNull String key) {
         return content.get(key).getAsLong();
     }
 
@@ -136,8 +131,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key Key to fetch from
      * @return The associated float
      */
-    public final float getFloat(String key) {
-        Checks.notNull(key);
+    public final float getFloat(@NotNull String key) {
         return content.get(key).getAsFloat();
     }
 
@@ -147,8 +141,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key Key to fetch from
      * @return The associated boolean
      */
-    public final boolean getBoolean(String key) {
-        Checks.notNull(key);
+    public final boolean getBoolean(@NotNull String key) {
         return content.get(key).getAsBoolean();
     }
 
@@ -158,8 +151,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key Key to fetch from
      * @return The associated decimal
      */
-    public final BigDecimal getBigDecimal(String key) {
-        Checks.notNull(key);
+    public final BigDecimal getBigDecimal(@NotNull String key) {
         return content.get(key).getAsBigDecimal();
     }
 
@@ -169,8 +161,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key Key to fetch from
      * @return The associated List
      */
-    public final List<Object> getList(String key) {
-        Checks.notNull(key);
+    public final List<Object> getList(@NotNull String key) {
         return JsonUtils.toList(content.get(key).toString());
     }
 
@@ -180,8 +171,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key Key to fetch from
      * @return The associated Map
      */
-    public final Map<String, Object> getMap(String key) {
-        Checks.notNull(key);
+    public final Map<String, Object> getMap(@NotNull String key) {
         return JsonUtils.toMap(content.get(key).toString());
     }
 
@@ -193,8 +183,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param <T>  Class object assignment
      * @return The deserialized object
      */
-    public final <T> T get(String key, Type type) {
-        Checks.notNull(key);
+    public final <T> T get(@NotNull String key, @NotNull Type type) {
         return get(key, type, Gsons.PRETTY_PRINTING);
     }
 
@@ -207,9 +196,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param <T>  Class object assignment
      * @return The deserialized object
      */
-    public final <T> T get(String key, Type type, Gson gson) {
-        Checks.notNull(key);
-        Checks.notNull(type);
+    public final <T> T get(@NotNull String key, @NotNull Type type, @NotNull Gson gson) {
         return gson.fromJson(content.get(key), type);
     }
 
@@ -222,9 +209,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param <T>  Class object assignment
      * @return The deserialized object
      */
-    public final <T> T getAs(Type type, Gson gson) {
-        Checks.notNull(type);
-        Checks.notNull(gson);
+    public final <T> T getAs(@NotNull Type type, @NotNull Gson gson) {
         return gson.fromJson(content, type);
     }
 
@@ -236,7 +221,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param <T>  Class object assignment
      * @return The deserialized object
      */
-    public final <T> T getAs(Type type) {
+    public final <T> T getAs(@NotNull Type type) {
         return getAs(type, Gsons.DEFAULT);
     }
 
@@ -255,8 +240,8 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param key   Key to assign to
      * @param value Value to assign to the key
      */
-    public final void set(String key, Object value) {
-        set(key, value, Gsons.PRETTY_PRINTING);
+    public final void set(@NotNull String key, @Nullable Object value) {
+        set(key, value == null ? JsonNull.INSTANCE : value, Gsons.PRETTY_PRINTING);
     }
 
     /**
@@ -266,22 +251,18 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param value Value to assign to the key
      * @param gson  Gson profile to use
      */
-    public final void set(String key, Object value, Gson gson) {
-        Checks.notNull(key);
-        Checks.notNull(value);
-        Checks.notNull(gson);
+    public final void set(@NotNull String key, @NotNull Object value, @NotNull Gson gson) {
         content.add(key, gson.toJsonTree(value));
     }
 
     /**
      * Removes the given key from the JSON file.
      * <p>
-     * This will have no effect if the given key doesn't exist.
+     * This will have no effect if the given key does not exist.
      *
      * @param key Key to remove
      */
-    public final void remove(String key) {
-        Checks.notNull(key);
+    public final void remove(@NotNull String key) {
         content.remove(key);
     }
 
@@ -291,11 +272,12 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param onException The task to execute on exception. If no exception handling is required,
      *                    this may be left null.
      */
-    public final void save(Consumer<IOException> onException) {
+    public final void save(@Nullable Consumer<IOException> onException) {
         try {
             writer.writeAndOverride(content, true);
         } catch (IOException e) {
-            ObjectUtils.ifNotNull(onException, task -> task.accept(e));
+            if (onException != null)
+                onException.accept(e);
         }
     }
 
@@ -307,9 +289,8 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @return This object instance
      */
     @Override
-    public final DirectConfiguration setFile(JsonFile file) {
+    public final DirectConfiguration setFile(@NotNull JsonFile file) {
         checkLocked("Cannot invoke #setFile() on a locked DirectConfiguration!");
-        Checks.notNull(file);
         writer.setFile(file);
         content = writer.getCachedContentAsObject();
         return this;
@@ -332,7 +313,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param file JSON file to contact
      * @return The DirectConfiguration object
      */
-    public static DirectConfiguration of(JsonFile file) {
+    public static DirectConfiguration of(@NotNull JsonFile file) {
         try {
             return new DirectConfiguration(file);
         } catch (IOException e) {
@@ -347,7 +328,7 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      * @return The DirectConfiguration object
      */
-    public static DirectConfiguration of(JsonFile file, boolean locked) {
+    public static DirectConfiguration of(@NotNull JsonFile file, boolean locked) {
         try {
             return new DirectConfiguration(file, locked);
         } catch (IOException e) {

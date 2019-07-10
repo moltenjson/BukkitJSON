@@ -15,16 +15,18 @@
  */
 package net.moltenjson.configuration.tree;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import net.moltenjson.configuration.direct.DirectConfiguration;
 import net.moltenjson.configuration.select.SelectableConfiguration;
+import net.moltenjson.configuration.tree.strategy.TreeNamingStrategy;
+import net.moltenjson.exceptions.InvalidFileException;
 import net.moltenjson.json.JsonFile;
 import net.moltenjson.json.JsonWriter;
-import net.moltenjson.configuration.tree.strategy.TreeNamingStrategy;
 import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +68,6 @@ import java.util.*;
  * @see DirectConfiguration
  * @since SimpleJSON 2.3.0
  */
-@Beta
 public class TreeConfiguration<N, E> {
 
     /**
@@ -74,7 +75,7 @@ public class TreeConfiguration<N, E> {
      * naming strategy, and the value is the file template specified in the
      * creation of the configuration in object generics.
      */
-    private Map<N, E> data = new LinkedHashMap<>();
+    private Map<N, E> data;
 
     /**
      * The parent directory which contains all the data files
@@ -135,6 +136,7 @@ public class TreeConfiguration<N, E> {
     /**
      * Used locally. To construct, use {@link TreeConfigurationBuilder}.
      *
+     * @param data                 An initial map data value to set
      * @param directory            Directory which contains all the data files
      * @param gson                 The GSON profile used for handling JSON data
      * @param searchSubdirectories Whether or not to search sub-directories
@@ -144,7 +146,8 @@ public class TreeConfiguration<N, E> {
      * @param ignoreInvalidFiles   Whether or not to ignore files whom names cannot be fetched from the naming strategy,
      *                             or cannot be parsed (malformed JSON)
      */
-    TreeConfiguration(File directory, Gson gson, boolean searchSubdirectories, ImmutableList<String> exclusionPrefixes, ImmutableList<String> restrictedExtensions, TreeNamingStrategy<N> namingStrategy, boolean ignoreInvalidFiles) {
+    TreeConfiguration(@NotNull Map<N, E> data, @NotNull File directory, @NotNull Gson gson, boolean searchSubdirectories, @NotNull ImmutableList<String> exclusionPrefixes, @NotNull ImmutableList<String> restrictedExtensions, @NotNull TreeNamingStrategy<N> namingStrategy, boolean ignoreInvalidFiles) {
+        this.data = data;
         this.directory = directory;
         this.gson = gson;
         this.searchSubdirectories = searchSubdirectories;
@@ -196,21 +199,20 @@ public class TreeConfiguration<N, E> {
      * @param templateType The type of data to serialize. This should be exactly the same
      *                     as the one specified in generics declaration.
      * @return The loaded data
-     * @throws IOException Any I/O errors when connecting to files.
      * @see #getData()
      */
-    public Map<N, E> load(Type templateType) throws IOException {
+    public Map<N, E> load(@NotNull Type templateType) {
         dataLoaded = true;
         data.clear();
         for (File file : files) {
             try {
-                setFile(file, false);
+                if (setFile(file, false) == null) continue;
                 N name;
                 name = namingStrategy.fromName(FilenameUtils.getBaseName(file.getName()));
                 data.put(name, gson.fromJson(writer.getCachedContentAsElement(), templateType));
-            } catch (Throwable throwable) {
+            } catch (InvalidFileException e) {
                 if (ignoreInvalidFiles) continue;
-                throw throwable;
+                throw e;
             }
         }
         return data;
@@ -244,7 +246,7 @@ public class TreeConfiguration<N, E> {
      * was not loaded.)
      * @see #get(Object)
      */
-    public boolean hasData(N name) {
+    public boolean hasData(@NotNull N name) {
         return dataLoaded && data.containsKey(name);
     }
 
@@ -258,8 +260,22 @@ public class TreeConfiguration<N, E> {
      * @return The name value.
      * @see #hasData(Object)
      */
-    public E get(N name) {
+    public E get(@NotNull N name) {
         return data.get(name);
+    }
+
+    /**
+     * Returns the associated data with the specified name entry. If there
+     * is no mapping for the specified entry, the specified fallback is returned.
+     *
+     * @param name     Name to look up
+     * @param fallback Value to return if no mapping exists for the specified entry
+     * @return The value associated with the key, or the specified fallback if
+     * no mapping exists.
+     */
+    public E getOrDefault(@NotNull N name, @Nullable E fallback) {
+        E value = get(name);
+        return value == null ? fallback : value;
     }
 
     /**
@@ -269,7 +285,7 @@ public class TreeConfiguration<N, E> {
      * @return {@code true} if the string is an exclusion prefix, and {@code false}
      * if otherwise.
      */
-    public boolean isExclusionPrefix(String prefix) {
+    public boolean isExclusionPrefix(@NotNull String prefix) {
         return exclusionPrefixes.contains(prefix);
     }
 
@@ -281,7 +297,7 @@ public class TreeConfiguration<N, E> {
      * @return {@code true} if the extension is allowed, and {@code false} if
      * otherwise.
      */
-    public boolean isExtensionAllowed(String extension) {
+    public boolean isExtensionAllowed(@NotNull String extension) {
         return restrictedExtensions.contains(extension);
     }
 
@@ -300,9 +316,9 @@ public class TreeConfiguration<N, E> {
      * the value.
      * @throws IOException Any I/O exceptions in handling data
      * @see #createIfAbsent(Object, Object, String)
+     * @see #delete(Object)
      */
-    public E create(N name, E value, String fileExtension) throws IOException {
-        data.put(name, value);
+    public E create(@NotNull N name, @NotNull E value, @NotNull String fileExtension) throws IOException {
         data.put(name, value);
         Preconditions.checkArgument(restrictedExtensions.contains(fileExtension), "The specified file extension (\"" + fileExtension + "\") is not one of the allowed extensions (" + restrictedExtensions + ")");
         File file = new File(directory, namingStrategy.toName(name) + "." + fileExtension);
@@ -325,8 +341,9 @@ public class TreeConfiguration<N, E> {
      * @return The specified value of the name. This can be used as a convenient way to store
      * the value.
      * @throws IOException Any I/O exceptions in handling data
+     * @see #create(Object, Object, String)
      */
-    public E createIfAbsent(N name, E value, String fileExtension) throws IOException {
+    public E createIfAbsent(@NotNull N name, @NotNull E value, @NotNull String fileExtension) throws IOException {
         E e = get(name);
         if (e == null) {
             e = create(name, value, fileExtension);
@@ -341,19 +358,22 @@ public class TreeConfiguration<N, E> {
      * @param name Name of the entry
      * @return An optional of a file that is associated to this entry
      */
-    private Optional<File> removeEntry(N name) {
+    private Optional<File> removeEntry(@NotNull N name) {
         E value = data.remove(name);
         if (value == null) return Optional.empty();
         return files.stream().filter(file -> FilenameUtils.getBaseName(file.getName()).equals(namingStrategy.toName(name))).findFirst();
     }
 
     /**
-     * Deletes the specified name from the cached data map and from the files.
+     * Deletes the specified name from the cached data map, and deletes the file
+     * associated with the entry.
      *
      * @param name Name of the entry to be deleted
      * @return The deleted value of the entry, or {@code null} if it had no mapping.
+     * @see #create(Object, Object, String)
+     * @see #exclude(Object)
      */
-    public E delete(N name) {
+    public E delete(@NotNull N name) {
         E value = data.remove(name);
         if (value == null) return null;
         //noinspection ResultOfMethodCallIgnored
@@ -367,11 +387,30 @@ public class TreeConfiguration<N, E> {
      *
      * @param name Name of the entry to be removed
      * @return An optional of the file which belongs to the specified name
+     * @see #delete(Object)
      */
-    public Optional<File> exclude(N name) {
+    public Optional<File> exclude(@NotNull N name) {
         Optional<File> entryFile = removeEntry(name);
         entryFile.ifPresent(files::remove);
         return entryFile;
+    }
+
+    /**
+     * Saves the current data map and updates the cached one. This will write the data to each file according
+     * to the naming strategy, and overwrite its old content with the new one specified in the current data map.
+     * <p>
+     * This method should be used after the data was loaded, modified, and has to be saved.
+     * <p>
+     * If data was cached in another map, and was modified in the same cached map, it will be
+     * more appropriate to use {@link #saveNewMap(Map)}. This method should be used when there is no
+     * external cache and all operations were done through the self-cache inside the configuration, such as invoking
+     * invoking {@link #create(Object, Object, String)} or {@link #delete(Object)}.
+     *
+     * @return The new data to save
+     * @throws IOException Any exceptions in I/O writing
+     */
+    public Map<N, E> save() throws IOException {
+        return saveNewMap(data);
     }
 
     /**
@@ -389,16 +428,16 @@ public class TreeConfiguration<N, E> {
      * @return The inputted map data
      * @throws IOException Any exceptions in I/O writing
      */
-    public Map<N, E> saveNewMap(Map<N, E> data) throws IOException {
+    public Map<N, E> saveNewMap(@NotNull Map<N, E> data) throws IOException {
         this.data = data;
         for (File file : files) {
-            setFile(file, false);
             try {
+                setFile(file, false);
                 N name = namingStrategy.fromName(FilenameUtils.getBaseName(file.getName()));
                 writer.writeAndOverride(data.get(name), gson);
-            } catch (Throwable throwable) {
+            } catch (InvalidFileException e) {
                 if (ignoreInvalidFiles) continue;
-                throw throwable;
+                throw e;
             }
         }
         return data;
@@ -432,13 +471,17 @@ public class TreeConfiguration<N, E> {
      * @param file   New file to set
      * @param create Whether or not to create it if it does not exist already.
      * @return The affected {@link JsonWriter}
-     * @throws IOException I/O errors when declaring a new writer or file.
      */
-    private JsonWriter setFile(File file, boolean create) throws IOException {
-        if (writer == null)
-            return writer = new JsonWriter(new JsonFile(file, create));
-        else
-            return writer.setFile(new JsonFile(file, create));
+    private JsonWriter setFile(File file, boolean create) throws InvalidFileException {
+        try {
+            if (writer == null)
+                return writer = new JsonWriter(new JsonFile(file, create));
+            else
+                return writer.setFile(new JsonFile(file, create));
+        } catch (Exception e) {
+            if (ignoreInvalidFiles) return writer;
+            throw new InvalidFileException(e, "Failed to parse file " + file.getName() + " in directory " + directory.getPath(), file);
+        }
     }
 
     /**
@@ -448,6 +491,7 @@ public class TreeConfiguration<N, E> {
      */
     public TreeConfigurationBuilder<N, E> asBuilder() {
         return new TreeConfigurationBuilder<N, E>(directory, namingStrategy)
+                .setDataMap(data)
                 .setGson(gson)
                 .searchSubdirectories(searchSubdirectories)
                 .setExclusionPrefixes(exclusionPrefixes)
@@ -463,7 +507,7 @@ public class TreeConfiguration<N, E> {
      * {@link Files#newDirectoryStream(Path)} throws an {@link IOException}, it returns {@code true} to
      * avoid making any calls to this directory.
      */
-    public static boolean isDirectoryEmpty(File directory) {
+    public static boolean isDirectoryEmpty(@NotNull File directory) {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory.toPath())) {
             boolean empty = !stream.iterator().hasNext();
             stream.close();

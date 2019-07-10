@@ -1,5 +1,5 @@
 /*
- * * Copyright 2018 github.com/moltenjson
+ * * Copyright 2018-2019 github.com/moltenjson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package net.moltenjson.configuration.select;
 
 import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a selection holder.
@@ -60,7 +61,7 @@ public class SelectionHolder<T> {
      *
      * @param value Initial value to set. This may be null
      */
-    public SelectionHolder(T value) {
+    public SelectionHolder(@Nullable T value) {
         this(value, true);
     }
 

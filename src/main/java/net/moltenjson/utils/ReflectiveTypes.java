@@ -1,5 +1,5 @@
 /*
- * * Copyright 2018-2019 github.com/moltenjson
+ * * Copyright 2018-2019-2019 github.com/moltenjson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * A simple class which contains different {@link java.lang.reflect.Type}s used by the library for
+ * A simple class which contains different {@link Type}s used by the library for
  * serializing and deserializing purposes.
  */
 public class ReflectiveTypes {

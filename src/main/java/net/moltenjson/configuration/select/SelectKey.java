@@ -1,5 +1,5 @@
 /*
- * * Copyright 2018 github.com/moltenjson
+ * * Copyright 2018-2019 github.com/moltenjson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package net.moltenjson.configuration.select;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -35,12 +37,12 @@ import java.lang.annotation.Target;
 public @interface SelectKey {
 
     /**
-     * The key of the field. If a field doesn't have a key (hence is empty or null) it will
+     * The key of the field. If a field does not have a key (hence is empty or null) it will
      * have its field name used as a key.
      *
      * @return The field key
      */
-    String value() default "";
+    @NotNull String value() default "";
 
     /**
      * Whether should the path to the variable in the JSON file include the classpath.
