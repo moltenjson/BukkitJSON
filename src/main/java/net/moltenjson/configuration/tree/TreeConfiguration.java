@@ -43,7 +43,7 @@ import java.util.*;
  * then this configuration can handle this data efficiently.
  * <p>
  * Do note that, the files <i>need</i> to follow a specific template; i.e have a single object that can
- * be serialized and deserialized by {@link com.google.gson.Gson} rather than having to control
+ * be serialized and deserialized by {@link Gson} rather than having to control
  * raw maps, lists, primitive types, etc. This allows the configuration to be able to handle all the
  * data efficiently.
  * <p>
