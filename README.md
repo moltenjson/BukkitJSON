@@ -1,3 +1,4 @@
+[![](https://jitpack.io/v/moltenjson/BukkitJSON.svg)](https://jitpack.io/#moltenjson/BukkitJSON)
 # BukkitJSON
 BukkitJSON is a Bukkit plugin, which acts like an alternative to [MoltenJSON](https://www.github.com/moltenjson/MoltenJSON). This allows developers to have MoltenJSON as a dependency without needing to embed it in the plugin JAR. It also allows multiple plugins that use BukkitJSON to have a relatively small JAR size, all through BukkitJSON.
 
