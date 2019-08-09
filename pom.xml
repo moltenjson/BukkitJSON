@@ -11,7 +11,7 @@
 
     <name>BukkitJSON</name>
 
-    <description>A Bukkit-based alternative to SimpleJSON</description>
+    <description>A Bukkit-based alternative to MoltenJSON</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
