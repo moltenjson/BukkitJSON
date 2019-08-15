@@ -6,7 +6,7 @@
 
     <groupId>net.reflxction</groupId>
     <artifactId>BukkitJSON</artifactId>
-    <version>2.4.7</version>
+    <version>2.4.9</version>
     <packaging>jar</packaging>
 
     <name>BukkitJSON</name>
@@ -65,22 +65,18 @@
     </repositories>
 
     <dependencies>
+
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
             <version>1.12.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>16.0.1</version>
+            <groupId>com.github.moltenjson</groupId>
+            <artifactId>MoltenJSON</artifactId>
+            <version>2.4.9</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
