@@ -268,14 +268,35 @@ public class DirectConfiguration implements Lockable<DirectConfiguration>, Refre
     }
 
     /**
+     * Returns whether the specified key exists in the configuration data or not.
+     *
+     * @param key Key to check for
+     * @return {@code true} if the member exists, {@code false} if otherwise.
+     */
+    public boolean contains(String key) {
+        return content.has(key);
+    }
+
+    /**
      * Saves the configuration
      *
      * @param onException The task to execute on exception. If no exception handling is required,
      *                    this may be left null.
      */
     public final void save(@Nullable Consumer<IOException> onException) {
+        save(Gsons.PRETTY_PRINTING, onException);
+    }
+
+    /**
+     * Saves the configuration
+     *
+     * @param gson        The GSON profile to save with
+     * @param onException The task to execute on exception. If no exception handling is required,
+     *                    this may be left null.
+     */
+    public final void save(@NotNull Gson gson, @Nullable Consumer<IOException> onException) {
         try {
-            writer.writeAndOverride(content, true);
+            writer.writeAndOverride(content, gson);
         } catch (IOException e) {
             if (onException != null)
                 onException.accept(e);
